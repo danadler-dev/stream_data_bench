@@ -18,8 +18,8 @@ public class KafkaPipelineBenchmark {
     private static final String BOOTSTRAP_SERVERS = "localhost:9092";
     private static final String TOPIC_PREFIX = "stage_";
     private static final long POLL_TIMEOUT_MS = 100;
-    private static final int RECORD_COUNT = 100_000;
-    private static final int RECORD_SIZE = 1000;
+    private static final int RECORD_COUNT = 2_000_000;
+    private static final int RECORD_SIZE = 2000;
 
     private static final long[] stageEndTimestamps = new long[STAGE_COUNT];
     private static final long start_time=System.currentTimeMillis();
@@ -116,7 +116,11 @@ public class KafkaPipelineBenchmark {
                     processed++;
                     final String key = record.key();
                     final String value = record.value();
-
+                    // replace the value with a string of the same length, filled with stage number
+                    // in reality, this will be the actual work done by the stage
+                    String transformedValue = String.valueOf((char) ('0' + stage)).repeat(value.length());
+                    if (processed % (RECORD_COUNT/2) == 0)
+                        System.out.println("Stage:" + stage + " payload example: " + transformedValue.substring(0, 20));
                     if (outputTopic != null) {
                         sendExecutor.submit(() -> {
                             try {
@@ -124,7 +128,7 @@ public class KafkaPipelineBenchmark {
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            producer.send(new ProducerRecord<>(outputTopic, key, value),
+                            producer.send(new ProducerRecord<>(outputTopic, key, transformedValue),
                                     (metadata, exception) -> {
                                         inflight.release();
                                         if (exception != null) exception.printStackTrace();
