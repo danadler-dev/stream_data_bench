@@ -1,0 +1,23 @@
+services:
+  jobmanager:
+    image: flink:1.18.0-java17
+    ports:
+      - "8081:8081"
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    command: jobmanager
+    networks:
+      - flink-net
+
+  taskmanager:
+    image: flink:1.18.0-java17
+    depends_on:
+      - jobmanager
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+    command: taskmanager
+    networks:
+      - flink-net
+
+networks:
+  flink-net:
