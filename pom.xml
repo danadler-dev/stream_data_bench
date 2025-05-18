@@ -49,6 +49,22 @@
             <artifactId>maven-plugin-annotations</artifactId>
             <version>3.1</version>
         </dependency>
+        <!-- Spark Core -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.12</artifactId>
+            <version>3.5.0</version>
+            <scope>provided</scope> <!-- provided by cluster -->
+        </dependency>
+
+        <!-- Spark Java API -->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.12</artifactId>
+            <version>3.5.0</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -69,11 +85,13 @@
                 <executions>
                     <execution>
                         <phase>package</phase>
-                        <goals><goal>shade</goal></goals>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.danadler.flink_bench.FlinkClusterPipeline</mainClass>
+                                    <mainClass>com.danadler.spark_bench.SparkPipelineBenchmark</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
