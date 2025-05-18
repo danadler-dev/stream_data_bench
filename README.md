@@ -104,3 +104,20 @@ This puts spark on equal footing with flink/kafka in terms of being able to proc
 
 ![Results](src/main/java/com/danadler/SparkBenchmark.png)
 
+## Conclusions:
+
+I compare the largest benchmark that all 5 technologies I tested were able to complete on one mac machine, it is the use case with:
+
+### 2M rows of 1K bytes each
+
+|  Configuration  |  Perf (sec)  |
+|:----------------|-------------:|
+| Kafka           |         246.0|
+| Kafka+Hazelcast |         127.0|
+| Flink (cluster) |          36.0|
+| Spark (cluster) |          27.0|
+| Flink (local)   |           4.7|
+
+Flink local is just a single in-memory pipeline that never gets fully materialized, and therefore doesnt run out of memory and doesn't have any interprocess overhead.
+
+Spark appears to be the faster option among the clustered options.
